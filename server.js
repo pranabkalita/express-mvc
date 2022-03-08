@@ -1,5 +1,9 @@
 // Global Imports
 import express from 'express'
+import dotenv from 'dotenv'
+
+// Config Dotenv
+dotenv.config()
 
 // Constants
 const port = process.env.PORT || 3000
