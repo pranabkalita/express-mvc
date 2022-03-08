@@ -12,6 +12,10 @@ import mongoSanitize from 'express-mongo-sanitize'
 // Config Dotenv
 dotenv.config()
 
+// Project Imports
+import log from './src/utils/Logger.js'
+import connectDB from './src/config/Database.js'
+
 // Constants
 const port = process.env.PORT || 3000
 const host = process.env.HOST || 'localhost'
@@ -43,6 +47,15 @@ app.get('/', (req, res) => {
 })
 
 // Start Server
-app.listen(port, host, () => {
-  console.info(`Server started on port http://${host}:${port}`)
-})
+
+const start = async () => {
+  try {
+    await connectDB()
+
+    app.listen(port, host, () => {
+      console.info(`Server started on port http://${host}:${port}`)
+    })
+  } catch (error) {}
+}
+
+await start()
