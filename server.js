@@ -15,6 +15,8 @@ dotenv.config()
 // Project Imports
 import log from './src/utils/Logger.js'
 import connectDB from './src/config/Database.js'
+import ErrorHandler from './src/utils/ErrorHandler.js'
+import ErrorMiddleware from './src/middlewares/ErrorMiddleware.js'
 
 // Import Router
 import v1Router from './src/routes/index.js'
@@ -26,6 +28,13 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes,
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again after 15 minutes!',
+})
+
+// Handle Uncaught Exceptions
+process.on('uncaughtException', (err) => {
+  log.error('UNCAUGHT EXCEPTION🔥. SHUTTING DOWN.')
+  log.error(err.name, err.message)
+  process.exit(1)
 })
 
 // Initialize App
@@ -47,15 +56,40 @@ app.use(compression())
 // Register Routes
 app.use('/api/v1', v1Router)
 
+// Handle Unhandled Routes
+app.all('*', (req, res) => {
+  next(new ErrorHandler('PAGE NOT FOUND', 404))
+})
+
+// Register Global Error Handling Middleware
+app.use(ErrorMiddleware)
+
 // Start Server
 const start = async () => {
   try {
     await connectDB()
 
-    app.listen(port, host, () => {
+    return app.listen(port, host, () => {
       log.info(`Server started on port http://${host}:${port}`)
     })
   } catch (error) {}
 }
 
-await start()
+const server = await start()
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  if (process.env.NODE_ENV === 'DEVELOPMENT') {
+    log.error(`ERROR: ${err.stack}`)
+  }
+
+  if (process.env.NODE_ENV === 'PRODUCTION') {
+    log.error(`ERROR: ${err.message}`)
+  }
+
+  log.warn('Shutting down the server due to the unhandled promise rejection.')
+
+  server.close(() => {
+    process.exit(1)
+  })
+})

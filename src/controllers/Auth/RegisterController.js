@@ -1,14 +1,17 @@
 import { validationResult } from 'express-validator'
 
 import { createUser } from '../../services/User.js'
+import CatchAsyncErrors from '../../utils/CatchAsyncErrors.js'
+import { SuccessResponse, ErrorResponse } from '../../utils/Response.js'
 
-const store = async (req, res) => {
+const store = CatchAsyncErrors(async (req, res, next) => {
   // 1) Check for errors
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    return res
-      .status(400)
-      .json({ message: 'User Registration failed.', errors: errors.array() })
+    return ErrorResponse(res, 400, {
+      message: 'User Registration failed.',
+      errors: errors.array(),
+    })
   }
 
   // 2) Register user
@@ -20,7 +23,10 @@ const store = async (req, res) => {
   // 4) Send email verification link
 
   // 5) Send response
-  return res.status(201).json({ message: 'User created successfully.', user })
-}
+  return SuccessResponse(res, 201, {
+    message: 'User created successfully.',
+    user,
+  })
+})
 
 export default { store }
