@@ -16,6 +16,9 @@ dotenv.config()
 import log from './src/utils/Logger.js'
 import connectDB from './src/config/Database.js'
 
+// Import Router
+import v1Router from './src/routes/index.js'
+
 // Constants
 const port = process.env.PORT || 3000
 const host = process.env.HOST || 'localhost'
@@ -41,19 +44,16 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use(compression())
 
-// Basic Route
-app.get('/', (req, res) => {
-  res.send('Welcome !')
-})
+// Register Routes
+app.use('/api/v1', v1Router)
 
 // Start Server
-
 const start = async () => {
   try {
     await connectDB()
 
     app.listen(port, host, () => {
-      console.info(`Server started on port http://${host}:${port}`)
+      log.info(`Server started on port http://${host}:${port}`)
     })
   } catch (error) {}
 }
