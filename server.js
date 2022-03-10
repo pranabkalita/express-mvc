@@ -5,7 +5,9 @@ import helmet from 'helmet'
 import xss from 'xss-clean'
 import dotenv from 'dotenv'
 import express from 'express'
+import { fileURLToPath } from 'url'
 import compression from 'compression'
+import path, { dirname } from 'path'
 import rateLimit from 'express-rate-limit'
 import mongoSanitize from 'express-mongo-sanitize'
 
@@ -22,6 +24,9 @@ import ErrorMiddleware from './src/middlewares/ErrorMiddleware.js'
 import v1Router from './src/routes/index.js'
 
 // Constants
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
 const port = process.env.PORT || 3000
 const host = process.env.HOST || 'localhost'
 const limiter = rateLimit({
@@ -39,6 +44,10 @@ process.on('uncaughtException', (err) => {
 
 // Initialize App
 const app = express()
+
+// View engine
+app.set('view engine', 'pug')
+app.set('views', path.join(__dirname, 'src/views'))
 
 // Middleware
 app.use(limiter)
