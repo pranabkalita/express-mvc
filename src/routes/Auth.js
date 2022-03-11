@@ -21,6 +21,7 @@ import {
   resetPasswordValidator,
   updatePasswordValidator,
 } from '../validators/Auth.js'
+import { uploadAvatarImage } from '../middlewares/ProfilePictureUpload.js'
 
 /**
  * Create Auth Router
@@ -57,6 +58,7 @@ router.put(
   UpdatePasswordController.update
 )
 router.get('/me', MeController.show)
+router.put('/me', uploadAvatarImage, MeController.update)
 router.post('/logout', LogoutController.store)
 
 export default router
