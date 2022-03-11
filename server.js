@@ -70,7 +70,7 @@ app.use(compression())
 app.use('/api/v1', v1Router)
 
 // Handle Unhandled Routes
-app.all('*', (req, res) => {
+app.all('*', (req, res, next) => {
   next(new ErrorHandler('PAGE NOT FOUND', 404))
 })
 

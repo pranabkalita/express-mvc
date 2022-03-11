@@ -1,5 +1,6 @@
-import User from '../models/User.js'
 import { decode } from './../utils/JWT.js'
+import { findUser } from '../services/User.js'
+import { findInvalidToken } from '../services/InvalidToken.js'
 
 export const deserializeUser = async (req, res, next) => {
   // 1) Get token and check if it exists
@@ -17,20 +18,28 @@ export const deserializeUser = async (req, res, next) => {
     return next()
   }
 
-  // 2) Verify token
+  // 2) Check if token is blacklisted
+  const invalidToken = await findInvalidToken(token)
+
+  if (invalidToken) {
+    return next()
+  }
+
+  // 3) Verify token
   const { valid, decoded } = decode(token)
 
   if (!valid) {
     return next()
   }
 
-  const freshUser = await User.findById(decoded.id)
+  // 4) Check if user still exists
+  const freshUser = await findUser({ _id: decoded.id })
 
   if (!freshUser) {
     return next()
   }
 
-  // 4) Grant access
+  // 5) Grant access
   req.user = freshUser
   res.locals.user = freshUser
   next()

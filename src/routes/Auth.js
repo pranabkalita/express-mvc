@@ -3,6 +3,7 @@ import express from 'express'
 // Controllers
 import MeController from '../controllers/Auth/MeController.js'
 import LoginController from '../controllers/Auth/LoginController.js'
+import LogoutController from '../controllers/Auth/LogoutController.js'
 import RegisterController from './../controllers/Auth/RegisterController.js'
 import EmailVerificationController from './../controllers/Auth/EmailVerificationController.js'
 
@@ -28,5 +29,6 @@ router.put(
   EmailVerificationController.update
 )
 router.get('/me', AuthMiddleware, MeController.show)
+router.post('/logout', AuthMiddleware, LogoutController.store)
 
 export default router
