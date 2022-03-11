@@ -38,11 +38,11 @@ const limiter = rateLimit({
 })
 
 // Handle Uncaught Exceptions
-// process.on('uncaughtException', (err) => {
-//   log.error('UNCAUGHT EXCEPTION🔥. SHUTTING DOWN.')
-//   log.error(err.name, err.message)
-//   process.exit(1)
-// })
+process.on('uncaughtException', (err) => {
+  log.error('UNCAUGHT EXCEPTION🔥. SHUTTING DOWN.')
+  log.error(err.name, err.message)
+  process.exit(1)
+})
 
 // Initialize App
 const app = express()
