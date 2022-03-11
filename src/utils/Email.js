@@ -74,4 +74,21 @@ export default class Email {
 
     await this.send(subject, 'welcome', templateParameters)
   }
+
+  /**
+   * Send email of Reset Password Link
+   */
+  async sendResetPasswordLink(token) {
+    const url = `${process.env.APP_URL}/api/v1/auth/reset-password/${this.user.email}/${token}`
+    const subject = 'Reset your password !'
+    const templateParameters = {
+      url,
+      subject,
+      firstName: this.user.firstName,
+      appName: process.env.APP_NAME,
+      fromName: process.env.MAIL_FROM_NAME,
+    }
+
+    await this.send(subject, 'resetPassword', templateParameters)
+  }
 }

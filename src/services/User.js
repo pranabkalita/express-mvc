@@ -79,3 +79,19 @@ export const validatePassword = async ({ email, password }) => {
     throw new Error(error)
   }
 }
+
+/**
+ * Reset user password
+ */
+export const resetPassword = async (userId, newPassword) => {
+  try {
+    const user = await findUser({ _id: userId })
+    user.password = newPassword
+    user.passwordReset = null
+    await user.save({ validateBeforeSave: false })
+
+    return user
+  } catch (error) {
+    throw new Error(error)
+  }
+}

@@ -34,3 +34,21 @@ export const loginValidator = [
   check('email', 'User must provide a valid email address.').isEmail(),
   check('password', 'User must provide a password.').notEmpty(),
 ]
+
+export const forgetPasswordValidator = [
+  check('email', 'User must provide a valid email address.').isEmail(),
+]
+
+export const resetPasswordValidator = [
+  check('email', 'A user must provide a valid email address.').isEmail(),
+  check('password', 'A user must have a strong password.').isStrongPassword(),
+  check('passwordConfirmation', 'Passwords must match.').custom(
+    async (passwordConfirmation, { req }) => {
+      const { password } = req.body
+
+      if (password != passwordConfirmation) {
+        throw new Error('Passwords must match.')
+      }
+    }
+  ),
+]
