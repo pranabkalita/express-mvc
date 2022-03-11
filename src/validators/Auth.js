@@ -29,3 +29,8 @@ export const registerValidator = [
     }
   ),
 ]
+
+export const loginValidator = [
+  check('email', 'User must provide a valid email address.').isEmail(),
+  check('password', 'User must provide a password.').notEmpty(),
+]

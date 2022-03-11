@@ -8,6 +8,7 @@ import express from 'express'
 import { fileURLToPath } from 'url'
 import compression from 'compression'
 import path, { dirname } from 'path'
+import cookieParser from 'cookie-parser'
 import rateLimit from 'express-rate-limit'
 import mongoSanitize from 'express-mongo-sanitize'
 
@@ -19,6 +20,7 @@ import log from './src/utils/Logger.js'
 import connectDB from './src/config/Database.js'
 import ErrorHandler from './src/utils/ErrorHandler.js'
 import ErrorMiddleware from './src/middlewares/ErrorMiddleware.js'
+import { deserializeUser } from './src/middlewares/DeserializeUserMiddleware.js'
 
 // Import Router
 import v1Router from './src/routes/index.js'
@@ -36,11 +38,11 @@ const limiter = rateLimit({
 })
 
 // Handle Uncaught Exceptions
-process.on('uncaughtException', (err) => {
-  log.error('UNCAUGHT EXCEPTION🔥. SHUTTING DOWN.')
-  log.error(err.name, err.message)
-  process.exit(1)
-})
+// process.on('uncaughtException', (err) => {
+//   log.error('UNCAUGHT EXCEPTION🔥. SHUTTING DOWN.')
+//   log.error(err.name, err.message)
+//   process.exit(1)
+// })
 
 // Initialize App
 const app = express()
@@ -55,7 +57,9 @@ app.use(hpp())
 app.use(xss())
 app.use(cors())
 app.use(helmet())
+app.use(cookieParser())
 app.use(mongoSanitize())
+app.use(deserializeUser)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))

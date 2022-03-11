@@ -62,3 +62,20 @@ export const activateUser = async (user) => {
     throw new Error(error)
   }
 }
+
+/**
+ * Check if users credentials are correct
+ */
+export const validatePassword = async ({ email, password }) => {
+  try {
+    const user = await User.findOne({ email }).select('+password')
+    if (!user || !(await user.comparePassword(password))) {
+      return null
+    }
+
+    user.password = undefined
+    return user
+  } catch (error) {
+    throw new Error(error)
+  }
+}

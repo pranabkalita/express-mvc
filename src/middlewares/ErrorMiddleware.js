@@ -13,7 +13,7 @@ export default (err, req, res, next) => {
     })
   }
 
-  if (process.env.NODE_ENV === 'DEVELOPMENT') {
+  if (process.env.NODE_ENV === 'PRODUCTION') {
     let error = { ...err }
     error.message = err.message
 
