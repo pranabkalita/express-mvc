@@ -28,6 +28,11 @@ router.put(
   AuthMiddleware,
   EmailVerificationController.update
 )
+router.post(
+  '/email/verification-notification',
+  AuthMiddleware,
+  EmailVerificationController.store
+)
 router.get('/me', AuthMiddleware, MeController.show)
 router.post('/logout', AuthMiddleware, LogoutController.store)
 
