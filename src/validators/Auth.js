@@ -52,3 +52,17 @@ export const resetPasswordValidator = [
     }
   ),
 ]
+
+export const updatePasswordValidator = [
+  check('oldPassword', 'User must provide their old password.').notEmpty(),
+  check('password', 'A user must have a strong password.').isStrongPassword(),
+  check('passwordConfirmation', 'Passwords must match.').custom(
+    async (passwordConfirmation, { req }) => {
+      const { password } = req.body
+
+      if (password != passwordConfirmation) {
+        throw new Error('Passwords must match.')
+      }
+    }
+  ),
+]
